@@ -113,8 +113,6 @@ class CMakePreset:
             return False
         elif self.targetPlatform == 'linuxAarch64':
             return False
-        if self.targetPlatform == 'jni-linux':
-            return False
         if self.targetPlatform == 'emscripten':
             return False
         return True
@@ -207,25 +205,6 @@ class CMakePreset:
         elif self.targetPlatform == 'mac64':
             outString = outString + ' -DTARGET_BUILD_PLATFORM=mac'
             outString = outString + ' -DPX_OUTPUT_ARCH=x86'
-            return outString
-        elif self.targetPlatform == 'jni-mac64':
-            outString = outString + ' -DTARGET_BUILD_PLATFORM=jni-mac'
-            outString = outString + ' -DPX_OUTPUT_ARCH=x86'
-            return outString
-        elif self.targetPlatform == 'jni-macAarch64':
-            outString = outString + ' -DTARGET_BUILD_PLATFORM=jni-mac'
-            outString = outString + ' -DPX_OUTPUT_ARCH=arm'
-            return outString
-        elif self.targetPlatform == 'jni-win64':
-            outString = outString + ' -Ax64'
-            outString = outString + ' -DTARGET_BUILD_PLATFORM=jni-windows'
-            outString = outString + ' -DPX_OUTPUT_ARCH=x86'
-            return outString
-        elif self.targetPlatform == 'jni-linux':
-            outString = outString + ' -DTARGET_BUILD_PLATFORM=jni-linux'
-            outString = outString + ' -DPX_OUTPUT_ARCH=x86'
-            outString = outString + ' -DCMAKE_C_COMPILER=clang'
-            outString = outString + ' -DCMAKE_CXX_COMPILER=clang++'
             return outString
         elif self.targetPlatform == 'emscripten':
             outString = outString + ' -DTARGET_BUILD_PLATFORM=emscripten'

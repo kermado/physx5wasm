@@ -67,7 +67,6 @@ MESSAGE("PhysX Build Platform: " ${TARGET_BUILD_PLATFORM})
 MESSAGE("Using CXX Compiler: " ${CMAKE_CXX_COMPILER})
 
 INCLUDE(NvidiaBuildOptions)
-INCLUDE(FixBuildOutputDirs.cmake)
 
 IF(CMAKE_CONFIGURATION_TYPES)
 	SET(CMAKE_CONFIGURATION_TYPES debug checked profile release)

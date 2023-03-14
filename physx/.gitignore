@@ -1,5 +1,4 @@
 bin/
 compiler/linux-*
 compiler/vc*
-compiler/jni*
 include/PxConfig.h
