@@ -83,6 +83,7 @@ SET(CLANG_WARNINGS "-ferror-limit=0 -Wall -Wextra -Werror -Wstrict-aliasing=2 -W
 	-Wno-unused-but-set-variable \
 	-Wno-unused-parameter \
     -Wno-reserved-identifier \
+	-Wno-unsafe-buffer-usage \
 ")
 
 # Set to true to enable multi-threading - works but is difficult to use
