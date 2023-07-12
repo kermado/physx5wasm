@@ -80,6 +80,7 @@ SET(CLANG_WARNINGS "-ferror-limit=0 -Wall -Wextra -Werror -Wstrict-aliasing=2 -W
     -Wno-weak-template-vtables \
     -Wno-weak-vtables \
     -Wno-zero-as-null-pointer-constant \
+	-Wno-unused-variable \
 	-Wno-unused-but-set-variable \
 	-Wno-unused-parameter \
     -Wno-reserved-identifier \
