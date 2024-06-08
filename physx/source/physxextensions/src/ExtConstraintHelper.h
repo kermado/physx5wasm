@@ -291,8 +291,8 @@ namespace Ext
 				raOut = ra;
 				rbOut = rb;
 
-				for(Px1DConstraint* front = mCurrent; front < current; front++)
-					front->flags |= Px1DConstraintFlag::eOUTPUT_FORCE;
+				//for(Px1DConstraint* front = mCurrent; front < current; front++)
+				//	front->flags |= Px1DConstraintFlag::eOUTPUT_FORCE; // OK: Disable force reporting for locked axes
 
 				mCurrent = current;
 			}
@@ -397,7 +397,7 @@ namespace Ext
 			{
 				c->velocityTarget = velTarget;
 
-				PxU16 flags = PxU16(c->flags | Px1DConstraintFlag::eSPRING | Px1DConstraintFlag::eHAS_DRIVE_LIMIT | Px1DConstraintFlag::eOUTPUT_FORCE); // OK: https://github.com/NVIDIA-Omniverse/PhysX/issues/286
+				PxU16 flags = PxU16(c->flags | Px1DConstraintFlag::eSPRING | Px1DConstraintFlag::eHAS_DRIVE_LIMIT | Px1DConstraintFlag::eOUTPUT_FORCE); // OK: Enable force reporting for drives https://github.com/NVIDIA-Omniverse/PhysX/issues/286
 				if(drive.flags & PxD6JointDriveFlag::eACCELERATION)
 					flags |= Px1DConstraintFlag::eACCELERATION_SPRING;
 				c->flags = flags;
