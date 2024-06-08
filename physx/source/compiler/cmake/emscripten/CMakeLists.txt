@@ -22,7 +22,7 @@
 ## (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ##
-## Copyright (c) 2008-2022 NVIDIA Corporation. All rights reserved.
+## Copyright (c) 2008-2024 NVIDIA Corporation. All rights reserved.
 
 STRING(TOLOWER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_LOWERCASE)
 
@@ -32,15 +32,12 @@ SET(CLANG_WARNINGS "-ferror-limit=0 -Wall -Wextra -Werror -Wstrict-aliasing=2 -W
     -Wno-atomic-implicit-seq-cst \
     -Wno-c++98-compat-pedantic \
     -Wno-cast-align \
-    -Wno-cast-qual \
     -Wno-conversion \
     -Wno-covered-switch-default \
     -Wno-deprecated \
-    -Wno-disabled-macro-expansion \
     -Wno-documentation-deprecated-sync \
     -Wno-documentation-unknown-command \
     -Wno-exit-time-destructors \
-    -Wno-error=undefined-func-template \
     -Wno-extra-semi-stmt \
     -Wno-float-equal \
     -Wno-format-nonliteral \
@@ -49,24 +46,19 @@ SET(CLANG_WARNINGS "-ferror-limit=0 -Wall -Wextra -Werror -Wstrict-aliasing=2 -W
     -Wno-implicit-fallthrough \
     -Wno-inconsistent-missing-destructor-override \
     -Wno-inconsistent-missing-override \
-    -Wno-invalid-noreturn \
     -Wno-missing-noreturn \
     -Wno-missing-prototypes \
     -Wno-missing-variable-declarations \
-    -Wno-nested-anon-types \
     -Wno-newline-eof \
     -Wno-non-virtual-dtor \
     -Wno-old-style-cast \
     -Wno-padded \
     -Wno-reserved-id-macro \
-    -Wno-return-type-c-linkage \
     -Wno-shadow \
-    -Wno-shift-sign-overflow \
     -Wno-suggest-destructor-override \
     -Wno-suggest-override \
     -Wno-switch-enum \
     -Wno-undef \
-    -Wno-undefined-func-template \
     -Wno-undefined-reinterpret-cast \
     -Wno-unknown-pragmas \
     -Wno-unknown-warning-option \
@@ -80,13 +72,22 @@ SET(CLANG_WARNINGS "-ferror-limit=0 -Wall -Wextra -Werror -Wstrict-aliasing=2 -W
     -Wno-weak-template-vtables \
     -Wno-weak-vtables \
     -Wno-zero-as-null-pointer-constant \
-	-Wno-unused-variable \
-	-Wno-unused-but-set-variable \
-	-Wno-unused-parameter \
     -Wno-reserved-identifier \
-	-Wno-unsafe-buffer-usage \
-	-Wno-switch-default \
-	-Wno-invalid-offsetof \
+    -Wno-undefined-func-template \
+    -Wno-cast-qual \
+    -Wno-double-promotion \
+    -Wno-extra-semi \
+    -Wno-conditional-uninitialized \
+    -Wno-unused-parameter \
+    -Wno-unsafe-buffer-usage \
+    -Wno-unsupported-floating-point-opt \
+    -Wno-unused-but-set-variable \
+    -Wno-unused-parameter \
+    -Wno-unused-variable \
+    -Wno-switch-default \
+    -Wno-invalid-offsetof \
+	-Wno-format \
+	-Wno-nan-infinity-disabled \
 ")
 
 # Set to true to enable multi-threading - works but is difficult to use
@@ -100,14 +101,28 @@ ELSE()
 ENDIF()
 
 
-SET(GCC_WARNINGS "-Wall -Werror -Wno-invalid-offsetof -Wno-uninitialized -Wno-nonnull-compare -Wno-mismatched-new-delete -Wno-pragmas -Wno-unused-function")
+SET(GCC_WARNINGS "-Wall -Werror\
+    -Wno-array-bounds\
+    -Wno-class-memaccess\
+    -Wno-invalid-offsetof\
+    -Wno-mismatched-new-delete\
+    -Wno-nonnull-compare\
+    -Wno-pragmas\
+    -Wno-uninitialized\
+    -Wno-unused-function\
+    -Wno-stringop-overflow\
+")
 SET(AARCH64_FLAGS "")
 
 IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	# using Clang
-	SET(PHYSX_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fno-rtti -fno-exceptions -ffunction-sections -fdata-sections -fstrict-aliasing ${AARCH64_FLAGS} ${CLANG_WARNINGS}" CACHE INTERNAL "PhysX CXX")
+	IF ("${CMAKE_CXX_COMPILER_VERSION}" VERSION_LESS "10.0.0")
+		SET(PHYSX_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fno-rtti -fno-exceptions -ffunction-sections -fdata-sections -fstrict-aliasing -fvisibility=hidden ${AARCH64_FLAGS} ${CLANG_WARNINGS}" CACHE INTERNAL "PhysX CXX")
+	ELSE()
+		SET(PHYSX_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fno-rtti -fno-exceptions -ffunction-sections -fdata-sections -fstrict-aliasing -fvisibility=hidden -ffp-exception-behavior=maytrap ${AARCH64_FLAGS} ${CLANG_WARNINGS}" CACHE INTERNAL "PhysX CXX")
+	ENDIF()
 ELSEIF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-	SET(PHYSX_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fno-rtti -fno-exceptions -ffunction-sections -fdata-sections -fno-strict-aliasing ${AARCH64_FLAGS} ${GCC_WARNINGS}" CACHE INTERNAL "PhysX CXX")
+	SET(PHYSX_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fno-rtti -fno-exceptions -ffunction-sections -fdata-sections -fno-strict-aliasing -fvisibility=hidden -ffp-exception-behavior=maytrap ${AARCH64_FLAGS} ${GCC_WARNINGS}" CACHE INTERNAL "PhysX CXX")
 ENDIF()
 
 # Build debug info for all configurations
@@ -132,15 +147,11 @@ ENDIF()
 
 # Controls PX_NVTX for all projects
 SET(NVTX_FLAG "PX_NVTX=0")
-IF(${CMAKE_CROSSCOMPILING} AND CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
-	SET(PX_SUPPORT_OMNI_PVD_FLAG "PX_SUPPORT_OMNI_PVD=0")
-ELSE()
-	SET(PX_SUPPORT_OMNI_PVD_FLAG "PX_SUPPORT_OMNI_PVD=1")
-ENDIF()
-SET(PHYSX_LINUX_COMPILE_DEFS "${CUDA_FLAG};${PHYSX_AUTOBUILD};${PUBLIC_RELEASE_FLAG};${FEATURES_UNDER_CONSTRUCTION_FLAG}" CACHE INTERNAL "Base PhysX preprocessor definitions")
-SET(PHYSX_LINUX_DEBUG_COMPILE_DEFS   "PX_DEBUG=1;PX_CHECKED=1;${NVTX_FLAG};PX_SUPPORT_PVD=1;${PX_SUPPORT_OMNI_PVD_FLAG}"  CACHE INTERNAL "Debug PhysX preprocessor definitions")
-SET(PHYSX_LINUX_CHECKED_COMPILE_DEFS "NDEBUG;PX_CHECKED=1;${NVTX_FLAG};PX_SUPPORT_PVD=1;${PX_SUPPORT_OMNI_PVD_FLAG}" CACHE INTERNAL "Checked PhysX preprocessor definitions")
-SET(PHYSX_LINUX_PROFILE_COMPILE_DEFS "NDEBUG;PX_PROFILE=1;${NVTX_FLAG};PX_SUPPORT_PVD=1;${PX_SUPPORT_OMNI_PVD_FLAG}"  CACHE INTERNAL "Profile PhysX preprocessor definitions")
+SET(PX_SUPPORT_OMNI_PVD_FLAG "PX_SUPPORT_OMNI_PVD=0")
+SET(PHYSX_LINUX_COMPILE_DEFS "${PHYSX_AUTOBUILD};${PUBLIC_RELEASE_FLAG};${FEATURES_UNDER_CONSTRUCTION_FLAG}" CACHE INTERNAL "Base PhysX preprocessor definitions")
+SET(PHYSX_LINUX_DEBUG_COMPILE_DEFS   "PX_DEBUG=1;PX_CHECKED=1;${NVTX_FLAG};PX_SUPPORT_PVD=0;${PX_SUPPORT_OMNI_PVD_FLAG}"  CACHE INTERNAL "Debug PhysX preprocessor definitions")
+SET(PHYSX_LINUX_CHECKED_COMPILE_DEFS "NDEBUG;PX_CHECKED=1;${NVTX_FLAG};PX_SUPPORT_PVD=0;${PX_SUPPORT_OMNI_PVD_FLAG}" CACHE INTERNAL "Checked PhysX preprocessor definitions")
+SET(PHYSX_LINUX_PROFILE_COMPILE_DEFS "NDEBUG;PX_PROFILE=1;${NVTX_FLAG};PX_SUPPORT_PVD=0;${PX_SUPPORT_OMNI_PVD_FLAG}"  CACHE INTERNAL "Profile PhysX preprocessor definitions")
 SET(PHYSX_LINUX_RELEASE_COMPILE_DEFS "NDEBUG;PX_SUPPORT_PVD=0;PX_SUPPORT_OMNI_PVD=0" CACHE INTERNAL "Release PhysX preprocessor definitions")
 
 #IF(PUBLIC_RELEASE)
@@ -183,14 +194,10 @@ ELSE()
 	INCLUDE(PhysXCommon.cmake)
 	INCLUDE(PhysXCooking.cmake)
 	INCLUDE(PhysXExtensions.cmake)
-IF(NOT ${CMAKE_CROSSCOMPILING} AND NOT PUBLIC_RELEASE)
-	INCLUDE(PhysXGPUExtensions.cmake)
-ENDIF()
 	INCLUDE(PhysXVehicle.cmake)
 	INCLUDE(PhysXVehicle2.cmake)
 	INCLUDE(SceneQuery.cmake)
 	INCLUDE(SimulationController.cmake)
-	INCLUDE(FastXml.cmake)
 	INCLUDE(PhysXPvdSDK.cmake)
 	INCLUDE(PhysXTask.cmake)
 	INCLUDE(emscripten/PhysXWasmBindings.cmake)
@@ -201,9 +208,6 @@ ENDIF()
 	SET_PROPERTY(TARGET PhysXCommon PROPERTY FOLDER "PhysX SDK")
 	SET_PROPERTY(TARGET PhysXCooking PROPERTY FOLDER "PhysX SDK")
 	SET_PROPERTY(TARGET PhysXExtensions PROPERTY FOLDER "PhysX SDK")
-IF(NOT ${CMAKE_CROSSCOMPILING} AND NOT PUBLIC_RELEASE)
-	SET_PROPERTY(TARGET PhysXGPUExtensions PROPERTY FOLDER "PhysX SDK")
-ENDIF()
 	SET_PROPERTY(TARGET PhysXVehicle PROPERTY FOLDER "PhysX SDK")
 	SET_PROPERTY(TARGET PhysXVehicle2 PROPERTY FOLDER "PhysX SDK")
 	SET_PROPERTY(TARGET LowLevel PROPERTY FOLDER "PhysX SDK")
@@ -211,16 +215,11 @@ ENDIF()
 	SET_PROPERTY(TARGET LowLevelDynamics PROPERTY FOLDER "PhysX SDK")
 	SET_PROPERTY(TARGET SceneQuery PROPERTY FOLDER "PhysX SDK")
 	SET_PROPERTY(TARGET SimulationController PROPERTY FOLDER "PhysX SDK")
-	SET_PROPERTY(TARGET FastXml PROPERTY FOLDER "PhysX SDK")
 	SET_PROPERTY(TARGET PhysXPvdSDK PROPERTY FOLDER "PhysX SDK")
 	SET_PROPERTY(TARGET PhysXTask PROPERTY FOLDER "PhysX SDK")
 	SET_PROPERTY(TARGET PhysXFoundation PROPERTY FOLDER "PhysX SDK")
 
-IF(NOT ${CMAKE_CROSSCOMPILING} AND NOT PUBLIC_RELEASE)
-	SET(PHYSXDISTRO_LIBS PhysXFoundation PhysX PhysXCharacterKinematic PhysXPvdSDK PhysXCommon PhysXCooking PhysXExtensions PhysXVehicle PhysXVehicle2 PhysXGPUExtensions)
-ELSE()
 	SET(PHYSXDISTRO_LIBS PhysXFoundation PhysX PhysXCharacterKinematic PhysXPvdSDK PhysXCommon PhysXCooking PhysXExtensions PhysXVehicle PhysXVehicle2)
-ENDIF()
 
 	INSTALL(
 		TARGETS ${PHYSXDISTRO_LIBS}

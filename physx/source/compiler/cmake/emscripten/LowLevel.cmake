@@ -22,7 +22,7 @@
 ## (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ##
-## Copyright (c) 2008-2022 NVIDIA Corporation. All rights reserved.
+## Copyright (c) 2008-2024 NVIDIA Corporation. All rights reserved.
 
 #
 # Build LowLevel
@@ -63,4 +63,4 @@ SET(LOWLEVEL_LIBTYPE OBJECT)
 
 # NOTE: Is this a UE4 specific change?
 # enable -fPIC so we can link static libs with the editor
-#SET_TARGET_PROPERTIES(LowLevel PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+#SET_TARGET_PROPERTIES(LowLevel PROPERTIES POSITION_INDEPENDENT_CODE TRUE)zz
