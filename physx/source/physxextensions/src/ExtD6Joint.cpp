@@ -351,6 +351,27 @@ void D6Joint::setDriveVelocity(const PxVec3& linear, const PxVec3& angular, bool
 #endif
 }
 
+// OK: Function to set drive position and velocity at the same time for efficiency.
+void D6Joint::setDrivePositionVelocity(const PxTransform& pose, const PxVec3& linear, const PxVec3& angular, bool autowake)
+{
+	PX_CHECK_AND_RETURN(pose.isSane(), "PxD6Joint::setDrivePosition: pose invalid");
+	PX_CHECK_AND_RETURN(linear.isFinite() && angular.isFinite(), "PxD6Joint::setDriveVelocity: velocity invalid");
+	physx::Ext::D6JointData& dat = data();
+	dat.drivePosition = pose;
+	dat.driveLinearVelocity = linear;
+	dat.driveAngularVelocity = angular;
+	if (autowake)
+		wakeUpActors();
+	markDirty();
+
+#if PX_SUPPORT_OMNI_PVD
+	OMNI_PVD_SET(PxD6Joint, drivePosition, static_cast<PxD6Joint&>(*this), pose)
+	const PxD6Joint& j = static_cast<const PxD6Joint&>(*this);
+	OMNI_PVD_SET(PxD6Joint, driveLinVelocity, j, linear)
+	OMNI_PVD_SET(PxD6Joint, driveAngVelocity, j, angular)
+#endif
+}
+
 void* D6Joint::prepareData()
 {
 	D6JointData& d = data();

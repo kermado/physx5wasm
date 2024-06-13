@@ -129,6 +129,7 @@ namespace Ext
 		virtual	PxTransform				getDrivePosition()	const	PX_OVERRIDE;
 		virtual	void					setDriveVelocity(const PxVec3& linear, const PxVec3& angular, bool autowake = true)	PX_OVERRIDE;
 		virtual	void					getDriveVelocity(PxVec3& linear, PxVec3& angular)	const	PX_OVERRIDE;						
+		virtual void                    setDrivePositionVelocity(const PxTransform& pose, const PxVec3& linear, const PxVec3& angular, bool autowake = true) PX_OVERRIDE; // OK: Function to set drive position and velocity at the same time for efficiency.
 		//~PxD6Joint
 
 		// PxConstraintConnector

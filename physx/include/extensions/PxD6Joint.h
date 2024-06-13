@@ -456,6 +456,9 @@ public:
 	*/
 	virtual void				getDriveVelocity(PxVec3& linear, PxVec3& angular)	const	= 0;
 
+	// OK: Function to set drive position and velocity at the same time for efficiency.
+	virtual void                setDrivePositionVelocity(const PxTransform& pose, const PxVec3& linear, const PxVec3& angular, bool autowake = true) = 0;
+
 	/**
 	\brief Returns string name of PxD6Joint, used for serialization
 	*/
