@@ -2052,8 +2052,12 @@ void ABP_PairManager::resizeForNewPairs(PxU32 nbDelayedPairs)
 
 	const PxU32 newNbPairs = currentNbPairs + nbDelayedPairs;
 
+	const PxU32 newHashSize = PxNextPowerOfTwo(newNbPairs + 1);
+	if(newHashSize == mHashSize)
+		return;
+
 	// Get more entries
-	mHashSize = PxNextPowerOfTwo(newNbPairs+1);
+	mHashSize = newHashSize;
 	mMask = mHashSize-1;
 
 	//reallocPairs();
